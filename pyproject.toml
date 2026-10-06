@@ -1,0 +1,19 @@
+[project]
+name = "remoteserver"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Saroj", email = "sarojtripathy116@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastmcp>=4.0.11",
+]
+
+[project.scripts]
+remoteserver = "remoteserver:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
