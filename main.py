@@ -9,8 +9,6 @@ from fastmcp import FastMCP
 
 mcp = FastMCP(name="ExpenseTracker")
 
-# Remote platforms may not allow writing inside the project folder.
-# tempfile.gettempdir() usually gives a writable directory.
 TEMP_DIR = tempfile.gettempdir()
 DB_PATH = os.path.join(TEMP_DIR, "expenses.db")
 
@@ -92,10 +90,6 @@ def normalize_date(date: str) -> str:
         raise ValueError("Date must be in YYYY-MM-DD format.")
 
 
-# Initialize database during startup
-init_db()
-
-
 @mcp.tool()
 async def add_expense(
     date: str,
@@ -104,18 +98,7 @@ async def add_expense(
     subcategory: str = "",
     note: str = "",
 ) -> dict:
-    """Add a new expense entry.
-
-    Use this when the user wants to record a spending transaction.
-
-    Required:
-    - date: YYYY-MM-DD
-    - amount: expense amount
-    - category: one of the allowed categories
-
-    Example:
-    add_expense("2026-04-20", 25, "Food & Dining", "Lunch", "Lunch at office")
-    """
+    """Add a new expense entry."""
     init_db()
 
     date = normalize_date(date)
@@ -159,11 +142,7 @@ async def add_expense(
 
 @mcp.tool()
 async def list_expenses(start_date: str, end_date: str) -> list[dict] | dict:
-    """List expense entries within an inclusive date range.
-
-    Example:
-    list_expenses("2026-04-01", "2026-04-30")
-    """
+    """List expense entries within an inclusive date range."""
     init_db()
 
     start_date = normalize_date(start_date)
@@ -206,12 +185,7 @@ async def summarize(
     end_date: str,
     category: str | None = None,
 ) -> list[dict] | dict:
-    """Summarize expenses by category within an inclusive date range.
-
-    Examples:
-    summarize("2026-04-01", "2026-04-30")
-    summarize("2026-04-01", "2026-04-30", "Food & Dining")
-    """
+    """Summarize expenses by category within an inclusive date range."""
     init_db()
 
     start_date = normalize_date(start_date)
@@ -254,10 +228,7 @@ async def summarize(
 
 @mcp.tool()
 async def delete_expense(expense_id: int) -> dict:
-    """Delete an expense by ID.
-
-    Use this only when the user clearly asks to delete an expense.
-    """
+    """Delete an expense by ID."""
     init_db()
 
     if expense_id <= 0:
@@ -300,7 +271,7 @@ def list_categories() -> list[str]:
 
 @mcp.tool()
 def get_database_location() -> dict:
-    """Show where the SQLite database is stored. Useful for debugging remote deployments."""
+    """Show where the SQLite database is stored."""
     init_db()
 
     return {
@@ -319,6 +290,7 @@ def categories() -> str:
 
 
 if __name__ == "__main__":
+    init_db()
     mcp.run(
         transport="http",
         host="0.0.0.0",
